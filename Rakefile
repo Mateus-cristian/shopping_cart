@@ -6,3 +6,13 @@
 require_relative 'config/application'
 
 Rails.application.load_tasks
+
+namespace :db do
+  desc 'Prepara o banco, executa os testes e remove containers Docker'
+  task docker_prepare_and_cleanup: :environment do
+    sh 'docker compose up -d db'
+    sh 'docker compose run --rm test bundle exec rake db:create db:schema:load'
+    sh 'docker compose run --rm test'
+    sh 'docker compose down'
+  end
+end
