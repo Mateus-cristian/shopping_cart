@@ -1,0 +1,44 @@
+require:
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  SuggestExtensions: false
+  TargetRubyVersion: 3.3
+  TargetRailsVersion: 7.1
+  Exclude:
+    - "db/schema.rb"
+    - "bin/**/*"
+    - "node_modules/**/*"
+    - "vendor/**/*"
+
+Layout/LineLength:
+  Max: 120
+
+Style/Documentation:
+  Enabled: false
+
+FactoryBot/CreateList:
+  Enabled: false
+
+Metrics/BlockLength:
+  Max: 50
+  Exclude:
+    - "spec/**/*"
+    - "config/routes.rb"
+
+RSpec/ExampleLength:
+  Max: 10
+
+RSpec/MultipleExpectations:
+  Max: 5
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 10
+
+RSpec/NamedSubject:
+  Enabled: false
+
+Rails/BulkChangeTable:
+  Enabled: false

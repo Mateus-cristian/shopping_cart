@@ -1,8 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: tech-interview-backend-entry-level
+  name: shopping_cart
 spec:
   type: service
   lifecycle: experimental
-  owner: group:default/rds-marketing
+  owner: group:default/mateus-sa
