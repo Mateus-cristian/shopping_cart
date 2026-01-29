@@ -6,21 +6,94 @@ info:
 paths:
   "/health":
     get:
-      summary: Health check endpoint
+      summary: health check
       tags:
       - Health
       responses:
         '200':
-          description: OK
+          description: healthy
+  "/products":
+    get:
+      summary: list products
+      tags:
+      - Products
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - id
+                  - name
+                  - price
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    price:
+                      type: number
+    post:
+      summary: create product
+      tags:
+      - Products
+      parameters: []
+      responses:
+        '201':
+          description: created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: number
+              required:
+              - name
+              - price
+  "/products/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show product
+      tags:
+      - Products
+      responses:
+        '200':
+          description: successful
           content:
             application/json:
               schema:
                 type: object
-                properties:
-                  status:
-                    type: string
                 required:
-                - status
+                - id
+                - name
+                - price
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  price:
+                    type: number
+    delete:
+      summary: delete product
+      tags:
+      - Products
+      responses:
+        '204':
+          description: no content
 servers:
 - url: http://localhost:3000
   variables:
