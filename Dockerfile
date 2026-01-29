@@ -46,9 +46,11 @@ RUN apt-get update -qq && \
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /app /app
 
+
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
-    chown -R rails:rails /app/db /app/log /app/storage /app/tmp /app/swagger
+    chown -R rails:rails /app/db /app/log /app/storage /app/tmp /app/swagger && \
+    chmod -R 777 /app/swagger
 USER rails:rails
 
 # Entrypoint prepares the database.
