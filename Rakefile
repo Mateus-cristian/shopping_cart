@@ -16,3 +16,10 @@ namespace :db do
     sh 'docker compose down'
   end
 end
+
+namespace :swagger do
+  desc 'Gera a documentação Swagger dentro do container Docker com permissão garantida'
+  task docker_generate: :environment do
+    sh 'docker compose run --user root --rm api bundle exec rake rswag:specs:swaggerize'
+  end
+end

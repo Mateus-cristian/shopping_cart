@@ -1,0 +1,28 @@
+---
+openapi: 3.0.1
+info:
+  title: API CART V1
+  version: v1
+paths:
+  "/health":
+    get:
+      summary: Health check endpoint
+      tags:
+      - Health
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                required:
+                - status
+servers:
+- url: http://localhost:3000
+  variables:
+    defaultHost:
+      default: localhost:3000
