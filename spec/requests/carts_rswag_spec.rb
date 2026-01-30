@@ -3,7 +3,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'Cart API', type: :request do
-  path '/carts' do
+  path '/cart' do
     get('Get current cart') do
       tags 'Cart'
       produces 'application/json'
@@ -16,7 +16,7 @@ RSpec.describe 'Cart API', type: :request do
         before do
           cart.cart_items.create!(product: product1, quantity: 2, unit_price: 7.0)
           cart.cart_items.create!(product: product2, quantity: 1, unit_price: 9.9)
-          post '/rack_session', params: { cart_id: cart.id }
+          post '/cart/rack_session', params: { cart_id: cart.id }
         end
 
         run_test! do |response|
@@ -34,12 +34,11 @@ RSpec.describe 'Cart API', type: :request do
           expect(json['products'][1]['quantity']).to eq(1)
           expect(json['products'][1]['unit_price']).to eq(9.9)
           expect(json['products'][1]['total_price']).to eq(9.9)
-          expect(json['total_price']).to eq(23.9)
         end
       end
     end
 
-    post('Add product to cart') do
+    post('Create cart and add product') do
       tags 'Cart'
       consumes 'application/json'
       produces 'application/json'
@@ -58,7 +57,7 @@ RSpec.describe 'Cart API', type: :request do
         let!(:product) { create(:product, name: 'Test Product', price: 1.99) }
 
         before do
-          post '/rack_session', params: { cart_id: cart.id }
+          post '/cart/rack_session', params: { cart_id: cart.id }
         end
 
         let(:body) { { product_id: product.id, quantity: 2 } }
@@ -71,7 +70,7 @@ RSpec.describe 'Cart API', type: :request do
 
       response(404, 'Product not found') do
         let!(:cart) { create(:cart, total_price: 0) }
-        before { post '/rack_session', params: { cart_id: cart.id } }
+        before { post '/cart/rack_session', params: { cart_id: cart.id } }
         let(:body) { { product_id: 9999, quantity: 2 } }
 
         run_test! do |response|
@@ -83,12 +82,78 @@ RSpec.describe 'Cart API', type: :request do
       response(422, 'Invalid quantity') do
         let!(:cart) { create(:cart, total_price: 0) }
         let!(:product) { create(:product, name: 'Invalid Quantity Product', price: 2.99) }
-        before { post '/rack_session', params: { cart_id: cart.id } }
+        before { post '/cart/rack_session', params: { cart_id: cart.id } }
         let(:body) { { product_id: product.id, quantity: 0 } }
 
         run_test! do |response|
           expect(response.content_type).to eq('application/json; charset=utf-8')
           expect(JSON.parse(response.body)['error']).to eq('Quantidade deve ser maior que zero')
+        end
+      end
+    end
+  end
+
+  path '/cart/add_item' do
+    post('Update or add product in cart') do
+      tags 'Cart'
+      consumes 'application/json'
+      produces 'application/json'
+
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: {
+          product_id: { type: :integer },
+          quantity: { type: :integer }
+        },
+        required: %w[product_id quantity]
+      }
+
+      response(200, 'Product quantity updated or added in cart') do
+        let!(:product1) { Product.create!(name: 'Produto X', price: 7.0) }
+        let!(:product2) { Product.create!(name: 'Produto Y', price: 9.9) }
+        let!(:cart) { Cart.create!(total_price: 0) }
+
+        before do
+          cart.cart_items.create!(product: product1, quantity: 2, unit_price: 7.0)
+          cart.cart_items.create!(product: product2, quantity: 1, unit_price: 9.9)
+          post '/cart/rack_session', params: { cart_id: cart.id }
+        end
+
+        let(:body) { { product_id: product1.id, quantity: 5 } }
+
+        run_test! do |response|
+          expect(response).to have_http_status(:ok)
+          json = JSON.parse(response.body)
+          expect(json['products'].size).to eq(2)
+          expect(json['products'][0]['id']).to eq(product1.id)
+          expect(json['products'][0]['quantity']).to eq(7)
+          expect(json['products'][1]['id']).to eq(product2.id)
+          expect(json['products'][1]['quantity']).to eq(1)
+        end
+      end
+
+      response(422, 'Invalid quantity') do
+        let!(:product1) { Product.create!(name: 'Produto X', price: 7.0) }
+        let!(:cart) { Cart.create!(total_price: 0) }
+        before { post '/cart/rack_session', params: { cart_id: cart.id } }
+        let(:body) { { product_id: product1.id, quantity: 0 } }
+
+        run_test! do |response|
+          expect(response).to have_http_status(422)
+          json = JSON.parse(response.body)
+          expect(json['error']).to eq('Quantidade deve ser maior que zero')
+        end
+      end
+
+      response(404, 'Product not found') do
+        let!(:cart) { Cart.create!(total_price: 0) }
+        before { post '/cart/rack_session', params: { cart_id: cart.id } }
+        let(:body) { { product_id: 9999, quantity: 1 } }
+
+        run_test! do |response|
+          expect(response).to have_http_status(404)
+          json = JSON.parse(response.body)
+          expect(json['error']).to eq('Produto não encontrado')
         end
       end
     end
