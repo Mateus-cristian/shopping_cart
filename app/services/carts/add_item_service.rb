@@ -9,7 +9,7 @@ module Carts
     end
 
     def call
-      validate_inputs
+      validate!
       @cart.transaction do
         add_or_update_item
         update_cart_total
@@ -17,21 +17,30 @@ module Carts
       @cart
     end
 
-    private
-
-    def validate_inputs
-      raise ArgumentError, 'Quantidade deve ser maior que zero' if @quantity <= 0
-      raise ActiveRecord::RecordNotFound, 'Produto não encontrado' unless @product
+    def self.add_item(cart:, product_id:, quantity:)
+      product = Product.find_by(id: product_id)
+      new(cart:, product:, quantity:).call
     end
 
+    private
+
     def add_or_update_item
-      cart_item = @cart.cart_items.find_by(product_id: @product.id)
+      cart_item = find_cart_item
       if cart_item
         cart_item.quantity += @quantity
         cart_item.save!
       else
         @cart.cart_items.create!(product: @product, quantity: @quantity, unit_price: @product.price)
       end
+    end
+
+    def find_cart_item
+      @cart.cart_items.find_by(product_id: @product.id)
+    end
+
+    def validate!
+      raise ArgumentError, 'Quantidade deve ser maior que zero' if @quantity.to_i <= 0
+      raise ActiveRecord::RecordNotFound, 'Produto não encontrado' unless @product
     end
 
     def update_cart_total
