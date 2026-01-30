@@ -8,17 +8,18 @@ class Cart < ApplicationRecord
   def as_json(_options = {})
     {
       id:,
-      items: items_json,
+      products: products_json,
       total_price: total_price.to_f
     }
   end
 
   private
 
-  def items_json
-    cart_items.map do |item|
+  def products_json
+    cart_items.includes(:product).map do |item|
       {
-        product_id: item.product_id,
+        id: item.product.id,
+        name: item.product.name,
         quantity: item.quantity,
         unit_price: item.unit_price.to_f,
         total_price: (item.quantity * item.unit_price).to_f

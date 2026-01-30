@@ -3,6 +3,10 @@
 class CartsController < ApplicationController
   before_action :current_cart
 
+  def show
+    render json: current_cart, include: :cart_items
+  end
+
   def create
     product_id = params[:product_id]
     quantity = params[:quantity].to_i
