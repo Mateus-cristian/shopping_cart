@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'swagger_helper'
 
 RSpec.describe 'Cart API', type: :request do

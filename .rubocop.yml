@@ -2,6 +2,9 @@ require:
   - rubocop-rails
   - rubocop-rspec
 
+RSpec:
+  Enabled: false
+
 AllCops:
   NewCops: enable
   SuggestExtensions: false
@@ -13,6 +16,7 @@ AllCops:
     - "node_modules/**/*"
     - "vendor/**/*"
     - "swagger/**"
+    - "spec/**"
 
 Layout/LineLength:
   Max: 120
