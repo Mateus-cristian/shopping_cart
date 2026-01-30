@@ -9,7 +9,7 @@ class Cart < ApplicationRecord
     {
       id:,
       items: items_json,
-      total_price:
+      total_price: total_price.to_f
     }
   end
 
@@ -20,8 +20,8 @@ class Cart < ApplicationRecord
       {
         product_id: item.product_id,
         quantity: item.quantity,
-        unit_price: item.unit_price,
-        total_price: item.quantity * item.unit_price
+        unit_price: item.unit_price.to_f,
+        total_price: (item.quantity * item.unit_price).to_f
       }
     end
   end
