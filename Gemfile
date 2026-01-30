@@ -20,6 +20,7 @@ group :development, :test do
   gem 'debug', platforms: %i[mri windows]
   gem 'factory_bot_rails', '6.4.3'
   gem 'faker', '3.3.1'
+  gem 'rack_session_access', '0.2.0'
   gem 'rspec-rails', '~> 6.1.0'
   gem 'rswag', '2.17.0'
   gem 'rubocop', '1.60.2', require: false
