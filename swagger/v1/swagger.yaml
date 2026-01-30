@@ -63,6 +63,59 @@ paths:
               required:
               - product_id
               - quantity
+  "/cart/{product_id}":
+    delete:
+      summary: Remove product from cart
+      tags:
+      - Cart
+      description: Removes a product from the cart by its ID. Returns the updated
+        cart or an error.
+      parameters:
+      - name: product_id
+        in: path
+        description: ID do produto a remover
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Cart empty after removal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        quantity:
+                          type: integer
+                        unit_price:
+                          type: number
+                        total_price:
+                          type: number
+                  total_price:
+                    type: number
+                required:
+                - products
+                - total_price
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
   "/health":
     get:
       summary: health check
