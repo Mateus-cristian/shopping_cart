@@ -29,6 +29,19 @@ services:
       DATABASE_URL: postgres://postgres:postgres@db:5432/store_development
       REDIS_URL: redis://redis:6379/0
 
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:postgres@db:5432/store_development
+      REDIS_URL: redis://redis:6379/0
+
   test:
     build: .
     command: bash -c "rm -rf tmp/cache/bootsnap && bundle exec rails db:create db:schema:load && bundle exec rspec"
