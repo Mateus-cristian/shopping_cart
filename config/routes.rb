@@ -11,4 +11,5 @@ Rails.application.routes.draw do
   get '/health', to: 'application#health'
 
   root 'rails/health#show'
+  resources :carts, only: [:create]
 end

@@ -4,7 +4,7 @@ info:
   title: API CART V1
   version: v1
 paths:
-  "/cart":
+  "/carts":
     post:
       summary: Add product to cart
       tags:
