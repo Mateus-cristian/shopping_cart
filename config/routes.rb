@@ -11,9 +11,11 @@ Rails.application.routes.draw do
   get '/health', to: 'application#health'
 
   root 'rails/health#show'
-  resources :carts, only: [:create] do
+  post '/cart/rack_session', to: 'rack_session#create'
+  resources :cart, only: %i[create show], controller: 'carts' do
     collection do
-      get '/', to: 'carts#show'
+      get '', to: 'carts#show'
+      post 'add_item', to: 'carts#add_item'
     end
   end
 end
