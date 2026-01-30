@@ -4,7 +4,7 @@ info:
   title: API CART V1
   version: v1
 paths:
-  "/carts":
+  "/cart":
     get:
       summary: Get current cart
       tags:
@@ -13,7 +13,7 @@ paths:
         '200':
           description: successful
     post:
-      summary: Add product to cart
+      summary: Create cart and add product
       tags:
       - Cart
       parameters: []
@@ -24,6 +24,32 @@ paths:
           description: Product not found
         '422':
           description: Invalid quantity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                quantity:
+                  type: integer
+              required:
+              - product_id
+              - quantity
+  "/cart/add_item":
+    post:
+      summary: Update or add product in cart
+      tags:
+      - Cart
+      parameters: []
+      responses:
+        '200':
+          description: Product quantity updated or added in cart
+        '422':
+          description: Invalid quantity
+        '404':
+          description: Product not found
       requestBody:
         content:
           application/json:
