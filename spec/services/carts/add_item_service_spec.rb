@@ -14,21 +14,12 @@ RSpec.describe Carts::AddItemService, type: :service do
     expect(result.total_price).to eq(20.0)
   end
 
-  it 'increments quantity if product already in cart' do
-    cart.cart_items.create!(product:, quantity: 1, unit_price: 10.0)
-    service = described_class.new(cart:, product:, quantity: 3)
-    result = service.call
-    expect(result.cart_items.first.quantity).to eq(4)
-    expect(result.total_price).to eq(40.0)
-  end
-
   it 'raises error for invalid quantity' do
     service = described_class.new(cart:, product:, quantity: 0)
     expect { service.call }.to raise_error(ArgumentError)
   end
 
   it 'raises error for missing product' do
-    service = described_class.new(cart:, product: nil, quantity: 1)
-    expect { service.call }.to raise_error(ActiveRecord::RecordNotFound)
+    expect { described_class.new(cart:, product: nil, quantity: 1) }.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

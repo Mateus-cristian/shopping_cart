@@ -32,4 +32,12 @@ RSpec.describe 'GET /cart', type: :request do
     expect(json['products'][1]['total_price']).to eq(9.9)
     expect(json['total_price']).to eq(23.9)
   end
+
+  it 'returns error when the cart is missing from the session' do
+    post '/cart/rack_session', params: { cart_id: nil }
+    get '/cart'
+    expect(response).to have_http_status(404)
+    json = response.parsed_body
+    expect(json['error']).to eq('Carrinho não encontrado')
+  end
 end
