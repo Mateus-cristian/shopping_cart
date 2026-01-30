@@ -4,6 +4,32 @@ info:
   title: API CART V1
   version: v1
 paths:
+  "/cart":
+    post:
+      summary: Add product to cart
+      tags:
+      - Cart
+      parameters: []
+      responses:
+        '200':
+          description: Product added to cart
+        '404':
+          description: Product not found
+        '422':
+          description: Invalid quantity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                quantity:
+                  type: integer
+              required:
+              - product_id
+              - quantity
   "/health":
     get:
       summary: health check
